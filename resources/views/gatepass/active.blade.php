@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 <style type="text/css">
-   
+
 </style>
 <section class="content-header">
    <div class="container-fluid">
@@ -13,7 +13,7 @@
          <div class="alert alert-danger">
             <h6>{{$errors->first()}}</h6>
          </div>
-         @endif  
+         @endif
       </div>
    </div>
 </section>
@@ -24,7 +24,7 @@
          <div class="card">
             <div class="card-body">
 
-              
+
                <table id="example13" class="table table-bordered table-striped">
                   <thead>
                      <tr>
@@ -39,11 +39,11 @@
                         <th>Action</th>
                      </tr>
                   </thead>
-                  <tbody> 
+                  <tbody>
                      <?php $id="";
                      ?>
                    @foreach($gatepass as $gatepasses)
-                    <?php 
+                    <?php
 
                      if($id!=$gatepasses->Gatepass_ID) { ?>
                      <tr>
@@ -81,7 +81,7 @@
                            <td><input type="label" name="TransporterID"  style="font-size: 14px; width:100%; text-align:center; border: none; background: white; flex: 0 0 0%;" value="{{$gatepasses->TransporterID}}" readonly></td>
                            <td><input type="label" name="Quantity"  style="font-size: 14px; width:100%; text-align:center; border: none; background: white; flex: 0 0 0%;" value="{{$gatepasses->Quantity}}" readonly></td>
                            <td><input type="hidden" class="Assign_Quantity" name="Assign_Quantity"  value="{{$gatepasses->Assign_Quantity}}">{{$gatepasses->Assign_Quantity}}</td>
-                         
+
                            <td><input type="label" name="Actual_Quantity"  class="Actual_Quantity" required style="font-size: 14px; width:100%; text-align:center;" value="{{$gatepasses->Actual_Quantity}}"></td>
                            <td><select name="whuser" required>
                                  <option value="">select user</option>
@@ -98,13 +98,13 @@
                               @endif
                         </form>
                      </tr>
-                   <?php } 
+                   <?php }
                     else
                      {   ?>
                      <tr  style="display: none;" id="<?php echo 'GP'.$gatepasses->Gatepass_ID;?>">
                         <input type="hidden" name="" id="g_id" value="$gatepasses->Gatepass_ID">
                         <form action="{{URL::to('/')}}/Warehouse_loading" method="POST">
-                          
+
                            <td><input type="label" name="Gatepass_ID"  style="font-size: 14px; width:100%; text-align:center; border: none; background: white; flex: 0 0 0%;"  value="GP<?php
                             if ($gatepasses->Gatepass_ID<10) {
                               echo "0".$gatepasses->Gatepass_ID;
@@ -120,7 +120,7 @@
                            <td><input type="label" name="TransporterID"  style="font-size: 14px; width:100%; text-align:center; border: none; background: white; flex: 0 0 0%;" value="{{$gatepasses->TransporterID}}" readonly></td>
                            <td><input type="label" name="Quantity"  style="font-size: 14px; width:100%; text-align:center; border: none; background: white; flex: 0 0 0%;" value="{{$gatepasses->Quantity}}" readonly></td>
                            <td ><input type="hidden" name="Assign_Quantity" id="Assign_Quantity" required class="Assign_Quantity" value="{{$gatepasses->Assign_Quantity}}">{{$gatepasses->Assign_Quantity}}</td>
-                     
+
                            <td><input type="number" class="Actual_Quantity" name="Actual_Quantity" id="Actual_Quantity{{$gatepasses->Gatepass_ID}}" required value="0" required style="font-size: 14px; width:100%; text-align:center;" min="
                          value="{{$gatepasses->Actual_Quantity}}"></td>
                            <td><select name="whuser" required>
@@ -141,7 +141,7 @@
 
                      <?php }
                      ?>
-                    
+
                     <?php $id=$gatepasses->Gatepass_ID;?>
                    @endforeach
                   </tbody>
@@ -156,7 +156,7 @@
 @section('UserScriptStr')
 <script type="text/javascript">
   setInterval(function()
-  { 
+  {
     window.location.reload();
   }, 120000);
 
@@ -187,10 +187,10 @@
    //          toastr.error('Actual quntity can not be more then Assign quntity ');
    //           $("#Start").prop('disabled',true)
    //          actualqty.value="";
-           
+
    //       }
    //    }
-      
+
    // }
 
   function myFunction(VehicleNumber) {
@@ -202,7 +202,7 @@
         }
          else{
         for(var i = 0; i < elms.length; i++) {
-           elms[i].style.display=''; 
+           elms[i].style.display='';
         }
            document.getElementById("show"+VehicleNumber).style.display="none";
             document.getElementById("hide"+VehicleNumber).style.display="";
@@ -217,12 +217,12 @@
         }
         else{
           for(var i = 0; i < elms.length; i++) {
-           elms[i].style.display='none'; 
+           elms[i].style.display='none';
         }
             document.getElementById("show"+VehicleNumber).style.display="";
             document.getElementById("hide"+VehicleNumber).style.display="none";
         }
-       
+
         // $('#hide').show();
    }
 
@@ -246,6 +246,6 @@
 
    // setInputFilter(document.getElementById("Actual_Quantity"), function(value) {
    //   return /^-?\d*[.,]?\d*$/.test(value) && (value === "" || parseInt(value) > 0); });
-   
+
 </script>
 @endsection

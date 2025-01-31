@@ -7,7 +7,7 @@
 
 <div class="dvanimation animate__animated p-6" :class="[$store.app.animation]">
    <div x-data="finance">
-       
+
     <section>
         <div class="mb-5 grid grid-cols-1 gap-6 text-white sm:grid-cols-5 xl:grid-cols-6">
 
@@ -111,7 +111,7 @@
                      </div>
                  </div>
              </a>
-             
+
             <!-- Issued Gatepass -->
             <a href="{{ route('issuedGatepass') }}" class="block">
                  <div class="panel max-w-md mx-auto bg-gradient-to-r from-blue-500 to-blue-400 p-6 rounded-lg shadow-lg card"
@@ -176,7 +176,7 @@
                         </div>
                     </div>
                 </div>
-            </a>    
+            </a>
 
     </section>
 

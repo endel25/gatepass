@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Http\Controllers;
 
 use Illuminate\Validation\ValidationException;
@@ -12,12 +10,13 @@ use App\Models\Appdirectory;
 use App\Models\Driver;
 use App\Models\User;
 use Illuminate\Http\Request;
-use DB;
-use Auth;
-use Storage;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Str;
 use File;
-use Image;
+use Illuminate\Support\Facades\Image;
 use Http;
 use Carbon\Carbon;
 
@@ -385,6 +384,14 @@ class GatepassController extends Controller
             ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
             ->count();
 
+        $qcapprovecount = DB::table('gatepasses')
+            ->where('Status', 'QC Approved')
+            ->count();
+        $qcapprovecountforlast7days = DB::table('gatepasses')
+            ->where('Status', 'QC Approved')
+            ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
+            ->count();
+
         $loadingcount = DB::table('gatepasses')
             ->where('Status', 'Loading/Unloading')
             ->count();
@@ -639,7 +646,13 @@ class GatepassController extends Controller
                         'ApproveTime' => Carbon::createFromFormat('d/m/Y H:i:s', $request['dateTime'])->format('Y-m-d H:i:s'),
 
                     ]);
-            } else if ($request->submitBtn == 'Loading/Unloading') {
+            } else if ($request->submitBtn == 'QC Approved') {
+                Gatepass::where('id', $gatepass->id)
+                    ->update([
+                        'Status' => 'QC Approved',
+                    ]);
+            }
+            else if ($request->submitBtn == 'Loading/Unloading') {
                 Gatepass::where('id', $gatepass->id)
                     ->update([
                         'Status' => 'Loading/Unloading',
@@ -684,11 +697,7 @@ class GatepassController extends Controller
      * @param  \App\Models\Gatepass  $gatepass
      * @return \Illuminate\Http\Response
      */
-
-
-
-
-     public function Gatepass_update(Request $request)
+    public function Gatepass_update(Request $request)
     {
         $flag = $this->checkPermission("GatePass", "IsUpdate");
 
@@ -1012,4 +1021,14 @@ class GatepassController extends Controller
     //          ->generate(
     //              'https://twitter.com/HarryKir',
     //          );
+
+
+
+    public function approves(){
+        return view('gatepass.approved');
+    }
+
+
+
+
 }

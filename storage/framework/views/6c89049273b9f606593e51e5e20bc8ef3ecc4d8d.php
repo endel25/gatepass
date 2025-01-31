@@ -1,5 +1,5 @@
-@extends('layouts.admin')
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <style type="text/css">
     .webcam-container {
         display: flex;
@@ -30,20 +30,19 @@
             width: 15px; /* Adjust the width to make it smaller */
             height: 15px; /* Adjust the height to make it smaller */
         }
-
+        
     </style>
 
 <section class="content-header">
   <div class="mb-2 flex items-center justify-between">
-    <h5 class="text-lg font-semibold dark:text-white-light">Edit Gate-pass #GP{{ str_pad($gatepass->id, 2, '0', STR_PAD_LEFT) }}</h5>
-    <a type="button" href="{{ route('gatepass.index') }}" class="btn btn-sm btn-l btn-primary rounded-full">Back</a>
+    <h5 class="text-lg font-semibold dark:text-white-light">Create Gate-pass</h5>
+    <a type="button" href="<?php echo e(route('gatepass.index')); ?>" class="btn btn-sm btn-l btn-primary rounded-full">Back</a>
   </div>
 </section>
 <section class="content">
   <div class="panel">
-    <form  class="space-y-2" id="myForm" action="{{ route('gatepass.update',$gatepass->id) }}" method="POST">
-      @csrf
-      @method('PUT')
+    <form  class="space-y-2" id="myForm" action="<?php echo e(route('gatepass.store')); ?>" method="POST">
+      <?php echo csrf_field(); ?>
       <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
         <!-- Left Section -->
         <div class="flex-1 max-w-lg space-y-4">
@@ -55,72 +54,62 @@
             <label for="GatepassType" class="sm:w-1/3 sm:mr-2">Gatepass Type</label>
             <div class="flex sm:flex-row flex-col">
               <label class="flex items-center cursor-pointer mr-2">
-                <input type="radio" {{$gatepass->GatepassType == 'Loading'?'selected':''}} name="GatepassType" value="Loading" class="form-radio" checked />
+                <input type="radio" name="GatepassType" value="Loading" class="form-radio" checked />
                 <span class="text-white-dark">Loading</span>
               </label>
               <label class="flex items-center cursor-pointer mr-2">
-                <input type="radio" {{$gatepass->GatepassType == 'Unloading'?'selected':''}} name="GatepassType" value="Unloading" class="form-radio" />
+                <input type="radio" name="GatepassType" value="Unloading" class="form-radio" />
                 <span class="text-white-dark">Unloading</span>
               </label>
               <label class="flex items-center cursor-pointer">
-                <input type="radio" {{$gatepass->GatepassType == 'Visit'?'selected':''}} name="GatepassType" value="Visit" class="form-radio" />
+                <input type="radio" name="GatepassType" value="Visit" class="form-radio" />
                 <span class="text-white-dark">Visit</span>
               </label>
             </div>
           </div>
-
+          
           <div class="flex sm:flex-row flex-col" id="VehicleNoField">
             <label for="VehicleNo" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Vehicle No.</label>
-            <input type="text" placeholder="Enter Vehicle No" class="text-xs form-input form-input-sm flex-auto" name="VehicleNo" id="VehicleNo" oninput="this.value = this.value.toUpperCase()" list="VehicleNoList" autocomplete="off" onkeydown="return preventSpace(event)" value="{{$gatepass->VehicleNo}}" readonly>
+            <input type="text" placeholder="Enter Vehicle No" class="text-xs form-input form-input-sm flex-auto" name="VehicleNo" id="VehicleNo" oninput="this.value = this.value.toUpperCase()" list="VehicleNoList" autocomplete="off" onkeydown="return preventSpace(event)">
             <datalist id="VehicleNoList">
             <!-- Populate this datalist dynamically using JavaScript -->
             </datalist>
           </div>
           <div class="flex sm:flex-row flex-col" id="TranspoterField">
             <label for="Transpoter" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Transporter</label>
-            <input type="text" placeholder="Enter Transporter Name" class="text-xs form-input form-input-sm flex-auto" name="Transporter" id="Transporter" oninput="this.value = this.value.toUpperCase()" list="TranspoterList" autocomplete="off" value="{{$gatepass->Transporter}}">
+            <input type="text" placeholder="Enter Transporter Name" class="text-xs form-input form-input-sm flex-auto" name="Transporter" id="Transporter" oninput="this.value = this.value.toUpperCase()" list="TranspoterList" autocomplete="off">
             <datalist id="TranspoterList">
             <!-- Populate this datalist dynamically using JavaScript -->
             </datalist>
           </div>
           <div class="flex sm:flex-row flex-col" id="LicenseNoField">
             <label for="LicenseNo" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">National Id</label>
-            <input type="text" placeholder="Enter National Id" class="text-xs form-input form-input-sm flex-auto" name="LicenseNo" id="LicenseNo" oninput="this.value = this.value.toUpperCase()" autocomplete="off" value="{{$gatepass->LicenseNo}}">
+            <input type="text" placeholder="Enter National Id" class="text-xs form-input form-input-sm flex-auto" name="LicenseNo" id="LicenseNo" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
           </div>
           <div class="flex sm:flex-row flex-col" id="ContactNoField">
             <label for="DriverName" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Driver Name</label>
-            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="DriverName" id="DriverName" value="{{$gatepass->DriverName}}" readonly>
-          </div>
-          @if($gatepass->Status == 'Approved' || $gatepass->GatepassType != 'Visit')
-          <div class="flex sm:flex-row flex-col" id="ContactNoField">
-            <label class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Tare Weight</label>
-            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="TareWeight" id="TareWeight" value="{{$gatepass->TareWeight}}" readonly>
+            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="DriverName" id="DriverName" readonly>
           </div>
           <div class="flex sm:flex-row flex-col" id="ContactNoField">
-            <label class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Gross Weight</label>
-            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="GrossWeight" id="GrossWeight" value="{{$gatepass->GrossWeight}}" readonly>
+            <label for="ContactNo" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Contact No.</label>
+            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="ContactNo" id="ContactNo" readonly>
           </div>
-          <div class="flex sm:flex-row flex-col" id="ContactNoField">
-            <label class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Net Weight</label>
-            <input type="text" placeholder="" class="text-xs form-input form-input-sm flex-auto" name="NetWeight" id="NetWeight" value="{{$gatepass->NetWeight}}" readonly>
-          </div>
-          @endif
           <div class="flex sm:flex-row flex-col hidden" id="PurposeField">
             <label for="Persontomeet" class="sm:w-1/3 sm:mr-2">Person to meet</label>
             <select id="Persontomeet"  name="Persontomeet" class="form-select-sm form-input flex-auto">
               <option value="">Select Person</option>
-              @foreach($users as $user)
-                  <option value="{{$user->FirstName}} {{$user->LastName}}">{{$user->FirstName}} {{$user->LastName}}</option>
-              @endforeach
+              <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                  <option value="<?php echo e($user->FirstName); ?> <?php echo e($user->LastName); ?>"><?php echo e($user->FirstName); ?> <?php echo e($user->LastName); ?></option>  
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
           </div>
-          <div class="flex sm:flex-row flex-col hidden" id="ExpiredDateField">
+          <div class="flex sm:flex-row flex-col" id="ExpiredDateField">
             <label for="ExpiredDate" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Expired Date</label>
-            <input type="date" class="text-xs form-input form-input-sm flex-auto" name="ExpiredDate" id="ExpiredDate" value="{{$gatepass->ExpiredDate}}" autocomplete="off">
+            <input type="date" class="text-xs form-input form-input-sm flex-auto" name="ExpiredDate" id="ExpiredDate" autocomplete="off">
           </div>
           <div class="flex sm:flex-row flex-col">
             <label class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Notes</label>
-            <textarea class="text-xs flex-auto form-input form-input-sm" name="Notes">{{$gatepass->Notes}}</textarea>
+            <textarea class="text-xs flex-auto form-input form-input-sm" name="Notes"></textarea>
           </div>
         </div>
         <!-- Right Section -->
@@ -128,7 +117,7 @@
           <div class="webcam-container">
             <div class="webcam-wrapper">
               <div id="webcam1" class="webcam-feed">
-                <img src="{{URL::to('/')}}/storage/app/public/webcam/{{$driver->DriverPhoto}}" width="320" id='driverphoto'>
+                <img src="<?php echo e(asset('dist/img/webcam.png')); ?>" width="320" id='driverphoto'>
               </div>
               <!-- <button type="button" style="margin-left: 1.2rem;" class="btn-sm btn-primary rounded-full" onclick="startWebcam1()">Start Stream</button>
               <button type="button" class="btn-sm btn-primary rounded-full" onclick="captureWebcam1()">Capture Driver Image</button>-->
@@ -141,7 +130,7 @@
           <div class="webcam-container">
             <div class="webcam-wrapper">
               <div id="webcam2" class="webcam-feed">
-                <img src="{{URL::to('/')}}/storage/app/public/webcam/{{$driver->LicencePhoto}}" width="320"  id="licencephoto">
+                <img src="<?php echo e(asset('dist/img/webcam.png')); ?>" width="320"  id="licencephoto">
               </div>
               <!-- <button type="button" style="margin-left: 1.2rem;" class="btn-sm btn-primary rounded-full" onclick="startWebcam2()">Start Stream</button>
               <button type="button" class="btn-sm btn-primary rounded-full" onclick="captureWebcam2()">Capture NationalId Image</button> -->
@@ -150,28 +139,7 @@
           </div>
         </div>
       </div>
-      @if($gatepass->Status != 'Exit')
-      <button type="submit" id="submitBtn" name="submitBtn" value="Update" class="btn btn-outline-primary btn-sm rounded-full !mt-6">Update</button>
-      @endif
-      @if($gatepass->Status == 'Pending')
-      <button type="submit" id="submitBtn" name="submitBtn" value="Approved" class="btn btn-outline-primary btn-sm rounded-full !mt-6">Approved Entry</button>
-      @endif
-
-      @if($gatepass->Status == 'Approved' && $gatepass->TareWeight != '')
-      <a href="{{route('approved')}}"> <button type="submit" id="submitBtn" name="submitBtn" value="QC Approved" class="btn btn-outline-primary btn-sm rounded-full !mt-6">QC Approved</button></a>
-      @endif
-
-      @if($gatepass->Status == 'QC Approved' && ($gatepass->TareWeight != '' || $gatepass->GrossWeight != ''))
-        <button type="submit" id="submitBtn" name="submitBtn" value="Loading/Unloading" class="btn btn-outline-primary btn-sm rounded-full !mt-6">Loading/Unloading</button>
-      @endif
-
-      @if($gatepass->Status == 'Loading/Unloading' && $gatepass->NetWeight != '' )
-      <button type="submit" id="submitBtn" name="submitBtn" value="Issued" class="btn btn-outline-primary btn-sm rounded-full !mt-6">Issued</button>
-      @endif
-      @if($gatepass->Status == 'Issued' && $gatepass->NetWeight != '' )
-      <button type="submit" id="submitBtn" name="submitBtn" value="Exit" class="btn btn-outline-primary btn-sm rounded-full !mt-6">Exit</button>
-      @endif
-
+      <button type="submit" id="submitBtn" class="btn btn-outline-primary btn-sm rounded-full !mt-6" disabled>Create Pending Entry</button>
     </form>
   </div>
 </section>
@@ -181,7 +149,7 @@
       <div class="flex items-center justify-center">
           <button type="button" class="btn btn-secondary" id="vehiclemodelclick" @click="toggle" style="display:none;">Static modal</button>
       </div>
-
+  
       <!-- modal -->
       <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
           <div class="flex items-start justify-center min-h-screen px">
@@ -194,24 +162,24 @@
                           <div class="flex sm:flex-row flex-col mb-4" id="VehicleTypeField"> <!-- Added mb-4 class -->
                               <label class="mb-0 sm:w-1/4 sm:ltr:mr-2 rtl:ml-2">Vehicle Type</label>
                               <select id="G_VehicleType" name="G_VehicleType" class="text-xs flex-1 form-input">
-                                  @foreach($vtype as $vtypes)
-                                  <option  value="{{$vtypes->FieldValue}}">{{$vtypes->FieldValue}}</option>
-                                  @endforeach
+                                  <?php $__currentLoopData = $vtype; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $vtypes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                  <option  value="<?php echo e($vtypes->FieldValue); ?>"><?php echo e($vtypes->FieldValue); ?></option>
+                                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                               </select>
                           </div>
-                          <div class="flex sm:flex-row flex-col mb-4" id="VehicleNoField">
+                          <div class="flex sm:flex-row flex-col mb-4" id="VehicleNoField"> 
                               <label for="VehicleNo" class="mb-0 sm:w-1/4 sm:ltr:mr-2 rtl:ml-2">Vehicle No.</label>
                               <input type="text" placeholder="Enter Vehicle No." class="text-xs form-input flex-1" name="G_VehicleNo" id="G_VehicleNo"  oninput="this.value = this.value.toUpperCase()">
                           </div>
-                          <div class="flex sm:flex-row flex-col mb-4" id="TransporterField">
+                          <div class="flex sm:flex-row flex-col mb-4" id="TransporterField"> 
                               <label class="mb-0 sm:w-1/4 sm:ltr:mr-2 rtl:ml-2">Transporter</label>
                               <select id="G_TransporterId" name="G_TransporterId" class="text-xs flex-1 form-input">
-                                  @foreach($transporter as $transporters)
-                                  <option {{$transporters->id == old('Transporter') ? 'selected' : ''}} value="{{$transporters->id}}">{{$transporters->TransporterName}}</option>
-                                  @endforeach
+                                  <?php $__currentLoopData = $transporter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $transporters): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                  <option <?php echo e($transporters->id == old('Transporter') ? 'selected' : ''); ?> value="<?php echo e($transporters->id); ?>"><?php echo e($transporters->TransporterName); ?></option>
+                                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                               </select>
                           </div>
-                          <div class="flex sm:flex-row flex-col mb-4">
+                          <div class="flex sm:flex-row flex-col mb-4"> 
                               <label class="mb-0 sm:w-1/4 sm:ltr:mr-2 rtl:ml-2">Notes</label>
                               <textarea class="text-xs flex-1 form-input" id="G_Notes" name="G_Notes"></textarea>
                           </div>
@@ -223,13 +191,13 @@
               </div>
           </div>
       </div>
-  </div>
+  </div>               
   <!-- script -->
   <script>
       document.addEventListener("alpine:init", () => {
           Alpine.data("Vehiclemodal", (initialOpenState = false) => ({
               open: initialOpenState,
-
+  
               toggle() {
                   this.open = !this.open;
               },
@@ -242,25 +210,25 @@
       <div class="flex items-center justify-center">
           <button type="button" class="btn btn-secondary" id="drivermodelclick" @click="toggle" style="display:none;">Static modal</button>
       </div>
-
+  
       <!-- modal -->
        <div class="fixed inset-0 bg-[black]/60 z-[999]  hidden overflow-y-auto" :class="open && '!block'">
                 <div class="flex items-start justify-center min-h-screen px-4">
                     <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8">
                         <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
                             <h5 class="font-bold text-lg">Add Driver</h5>
-
+                            
                         </div>
                         <div class="p-5">
                             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-
+        
                                 <!-- Left Section -->
                                 <div class="flex-1 max-w-lg space-y-3">
                                   <div class="flex sm:flex-row flex-col" id="PersonTypeField">
                                     <label for="PersonType" class="mb-0 sm:w-1/2 sm:ltr:mr-2 rtl:ml-2">Person Type</label>
                                     <select id="G_PersonType" name="G_PersonType" class="form-input-sm  form-input">
-                                      <option value="Driver">Driver</option>
-                                      <option value="Visitor">Visitor</option>
+                                      <option value="Driver">Driver</option>     
+                                      <option value="Visitor">Visitor</option>     
                                     </select>
                                   </div>
                                   <div class="flex sm:flex-row flex-col" id="FirstNameField">
@@ -290,7 +258,7 @@
                                   <div class="webcam-container">
                                     <div class="webcam-wrapper">
                                       <div id="G_webcam1" class="webcam-feed">
-                                        <img src="{{asset('dist/img/webcam.png')}}" width="320">
+                                        <img src="<?php echo e(asset('dist/img/webcam.png')); ?>" width="320">
                                       </div>
                                       <button type="button" style="margin-left: 1.2rem;" class="btn-sm btn-primary rounded-full" onclick="startWebcam1()">Start Stream</button>
                                       <button type="button" class="btn-sm btn-primary rounded-full" onclick="captureWebcam1()">Capture Driver Image</button>
@@ -303,7 +271,7 @@
                                   <div class="webcam-container">
                                     <div class="webcam-wrapper">
                                       <div id="G_webcam2" class="webcam-feed">
-                                        <img src="{{asset('dist/img/webcam.png')}}" width="320" >
+                                        <img src="<?php echo e(asset('dist/img/webcam.png')); ?>" width="320" >
                                       </div>
                                       <button type="button" style="margin-left: 1.2rem;" class="btn-sm btn-primary rounded-full" onclick="startWebcam2()">Start Stream</button>
                                       <button type="button" class="btn-sm btn-primary rounded-full" onclick="captureWebcam2()">Capture NationalId Image</button>
@@ -311,7 +279,7 @@
                                     </div>
                                   </div>
                                 </div>
-
+                                
                             </div>
 
                             <div class="flex justify-end items-center mt-8">
@@ -322,14 +290,14 @@
                 </div>
             </div>
         </div>
-
+                    
   </div>
   <!-- script -->
   <script>
       document.addEventListener("alpine:init", () => {
           Alpine.data("Drivermodal", (initialOpenState = false) => ({
               open: initialOpenState,
-
+  
               toggle() {
                   this.open = !this.open;
               },
@@ -338,43 +306,9 @@
   </script>
 </section>
 
-@endsection
-@section('Script')
-<script  src="{{ asset('plugins/jquery/webcam.min.js') }}"></script>
-<script>
-    // Function to toggle fields based on selected Gatepass Type
-    function toggleFields() {
-        var gatepassType = document.querySelector('input[name="GatepassType"]:checked').value;
-
-        // Show/hide fields based on Gatepass Type
-        if (gatepassType === 'Visit') {
-            document.getElementById('PurposeField').classList.remove('hidden');
-            document.getElementById('ExpiredDateField').classList.remove('hidden');
-            document.getElementById('VehicleNoField').classList.add('hidden');
-            document.getElementById('TranspoterField').classList.add('hidden');
-            document.getElementById('LicenseNoField').classList.add('hidden');
-        } else {
-            document.getElementById('PurposeField').classList.add('hidden');
-            document.getElementById('ExpiredDateField').classList.add('hidden');
-            document.getElementById('VehicleNoField').classList.remove('hidden');
-            document.getElementById('TranspoterField').classList.remove('hidden');
-            document.getElementById('LicenseNoField').classList.remove('hidden');
-        }
-    }
-
-    // Function to initialize form based on initial Gatepass Type onload
-    function initializeForm() {
-        toggleFields(); // Toggle fields based on initial Gatepass Type
-    }
-
-    // Trigger initializeForm function when the page loads
-    window.onload = initializeForm;
-
-    // Trigger toggleFields function whenever Gatepass Type changes
-    document.querySelectorAll('input[name="GatepassType"]').forEach(item => {
-        item.addEventListener('change', toggleFields);
-    });
-</script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('Script'); ?>
+<script  src="<?php echo e(asset('plugins/jquery/webcam.min.js')); ?>"></script>
 <script>
 
 // Web camras
@@ -411,7 +345,7 @@
 
 // Dropdown
   document.addEventListener("DOMContentLoaded", function(e) {
-      // seachable
+      // seachable 
       var options = {
           searchable: true
       };
@@ -420,7 +354,7 @@
 //Real time clock
   $( document ).ready(function() {
     setInterval(function()
-    {
+    { 
        var dt = new Date($.now());
 
        var _day = dt.getDate();
@@ -450,7 +384,6 @@
     const driverNameInput = document.querySelector('#DriverName');
     const transporterField = document.querySelector('#TranspoterField');
     const purposeField = document.querySelector('#PurposeField');
-    const expiredDateField = document.querySelector('#ExpiredDateField');
 
     gatepassTypeRadios.forEach(radio => {
       radio.addEventListener('change', function() {
@@ -459,33 +392,31 @@
           driverNameInput.placeholder = 'Enter Visitor Name';
           transporterField.classList.add('hidden');
           purposeField.classList.remove('hidden');
-          expiredDateField.classList.remove('hidden');
         } else {
           driverNameLabel.textContent = 'Driver Name';
           driverNameInput.placeholder = '';
           transporterField.classList.remove('hidden');
           purposeField.classList.add('hidden');
-          expiredDateField.classList.add('hidden');
         }
       });
     });
   });
-
+  
 //Vehicle
 
   $('#VehicleNo').on('keyup', function() {
-
+     
       var input = $(this).val().trim();
       if (input) {
-
+         
               fetchVehicleNo(input);
-
+          
       }
   });
 
   function fetchVehicleNo(input) {
     $.ajax({
-        url: "{{ url('/vehiclelist') }}",
+        url: "<?php echo e(url('/vehiclelist')); ?>",
         method: 'POST',
         data: {
             query: input
@@ -498,7 +429,7 @@
                         VehicleNos.VehicleNo +
                         "</option>");
                 });
-            }
+            } 
         },
         error: function (xhr, status, error) {
             console.error('Error fetching vendors:', error);
@@ -507,7 +438,7 @@
   }
 
   $('#VehicleNo').on('change', function() {
-
+      
       var input = $(this).val().trim();
       if (input) {
           CheckVehicleNo(input);
@@ -516,7 +447,7 @@
 
   function CheckVehicleNo(input) {
     $.ajax({
-        url: "{{ url('/vehiclecheck') }}",
+        url: "<?php echo e(url('/vehiclecheck')); ?>",
         method: 'POST',
         data: {
             query: input
@@ -527,13 +458,18 @@
               var VehicleNo=response.vehicledata.VehicleNo;
               var TransporterName=response.vehicledata.TransporterName;
 
-
+              
               $('#VehicleNo').val(VehicleNo);
-              $('#Transpoter').val(TransporterName);
+              $('#Transporter').val(TransporterName);
               $('#submitBtn').prop('disabled',false);
-            } else {
+            } 
+            else if(count == 2){
+              $('#VehicleNo').val('');
+                showMessage(response.error,'error');
+            }
+            else {
               vehicleshowAlert()
-
+                
             }
         },
         error: function (xhr, status, error) {
@@ -566,7 +502,7 @@
 
       $('#G_VehicleNo').val($('#VehicleNo').val());
       $('#vehiclemodelclick').trigger("click");
-
+       
     } else if (result.dismiss === window.Swal.DismissReason.cancel) {
         $('#VehicleNo').val('');
     }
@@ -590,7 +526,7 @@
             isValid = false;
         }
 
-
+      
 
       if (!isValid) {
           showMessage('Please fill out all fields.','error');
@@ -600,7 +536,7 @@
       // Perform AJAX request
       $.ajax({
           type: 'POST',
-          url: '{{ url('/save_vehicle') }}', // Replace with your endpoint URL
+          url: '<?php echo e(url('/save_vehicle')); ?>', // Replace with your endpoint URL
           data: formData,
           success: function(response) {
              if (response.success == '1') {
@@ -623,15 +559,18 @@
 
 // Transpoter
   $('#Transpoter').on('keyup', function() {
+     
       var input = $(this).val().trim();
       if (input) {
+         
               fetchTranspoter(input);
+         
       }
   });
 
   function fetchTranspoter(input) {
     $.ajax({
-        url: "{{ url('/transporterlist') }}",
+        url: "<?php echo e(url('/transporterlist')); ?>",
         method: 'POST',
         data: {
             query: input
@@ -643,7 +582,7 @@
                     $('#TranspoterList').append("<option value='" +Transpoters.TransporterName+ "'>" +Transpoters.TransporterName+
                         "</option>");
                 });
-            }
+            } 
         },
         error: function (xhr, status, error) {
             console.error('Error fetching vendors:', error);
@@ -652,6 +591,7 @@
   }
 
   $('#Transpoter').on('change', function() {
+      
       var input = $(this).val().trim();
       if (input) {
           CheckTranspoter(input);
@@ -660,7 +600,7 @@
 
   function CheckTranspoter(input) {
     $.ajax({
-        url: "{{ url('/transportercheck') }}",
+        url: "<?php echo e(url('/transportercheck')); ?>",
         method: 'POST',
         data: {
             query: input
@@ -671,7 +611,7 @@
               var TransporterName=response.transporterdata.TransporterName;
               $('#Transpoter').val(TransporterName);
             } else {
-
+               
             }
         },
         error: function (xhr, status, error) {
@@ -682,7 +622,7 @@
 
 //Driver
   $('#LicenseNo').on('change', function() {
-
+      
       var input = $(this).val().trim();
       var GatepassType = $('input[name="GatepassType"]:checked').val();
       if (input) {
@@ -714,7 +654,7 @@
 
      $('#G_LicenseNo').val($('#LicenseNo').val());
       $('#drivermodelclick').trigger("click");
-
+       
     } else if (result.dismiss === window.Swal.DismissReason.cancel) {
         $('#LicenseNo').val('');
     }
@@ -722,7 +662,7 @@
 
   function CheckLicenseNo(input,GatepassType) {
     $.ajax({
-        url: "{{ url('/licensenocheck') }}",
+        url: "<?php echo e(url('/licensenocheck')); ?>",
         method: 'POST',
         data: {
             query: input,
@@ -738,16 +678,16 @@
               var fullName = firstName + ' ' + lastName;
               $('#DriverName').val(fullName);
                 if (DriverPhoto != "") {
-                  document.getElementById('driverphoto').src = "{{URL::to('/')}}/storage/app/public/webcam/" + DriverPhoto;
+                  document.getElementById('driverphoto').src = "<?php echo e(URL::to('/')); ?>/storage/app/public/webcam/" + DriverPhoto;
                 } if (LicencePhoto != "") {
-                  document.getElementById('licencephoto').src = "{{URL::to('/')}}/storage/app/public/webcam/" + LicencePhoto;
+                  document.getElementById('licencephoto').src = "<?php echo e(URL::to('/')); ?>/storage/app/public/webcam/" + LicencePhoto;
                 }
             } else {
-
-
+               
+               
                drivershowAlert()
-
-
+               
+               
             }
         },
         error: function (xhr, status, error) {
@@ -757,7 +697,6 @@
   }
 
   $('#saveDriverButton').click(function() {
-
       // Validate the mandatory fields
       const personType = document.getElementById('G_PersonType').value;
       const firstName = document.getElementById('G_FirstName').value;
@@ -786,7 +725,7 @@
       // Perform AJAX request
       $.ajax({
             type: 'POST',
-            url: '{{ url('/save_driver') }}', // Replace with your endpoint URL
+            url: '<?php echo e(url('/save_driver')); ?>', // Replace with your endpoint URL
             data: formDataDriver,
             processData: false,  // Important!
             contentType: false,  // Important!
@@ -803,10 +742,10 @@
                     $('#DriverName').val(fullName);
 
                     if (DriverPhoto != "") {
-                        document.getElementById('driverphoto').src = "{{URL::to('/')}}/storage/app/public/webcam/" + DriverPhoto;
-                    }
+                        document.getElementById('driverphoto').src = "<?php echo e(URL::to('/')); ?>/storage/app/public/webcam/" + DriverPhoto;
+                    } 
                     if (LicencePhoto != "") {
-                        document.getElementById('licencephoto').src = "{{URL::to('/')}}/storage/app/public/webcam/" + LicencePhoto;
+                        document.getElementById('licencephoto').src = "<?php echo e(URL::to('/')); ?>/storage/app/public/webcam/" + LicencePhoto;
                     }
                 } else {
                     showMessage(response.error, 'error');
@@ -819,4 +758,6 @@
         });
   });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Program Files\Ampps\www\gatepass\resources\views/gatepass/create.blade.php ENDPATH**/ ?>
