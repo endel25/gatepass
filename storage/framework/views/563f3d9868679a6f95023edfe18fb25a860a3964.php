@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('content'); ?>
 <style type="text/css">
     .webcam-container {
