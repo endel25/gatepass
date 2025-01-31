@@ -92,6 +92,7 @@ Route::group(['middleware' => "web"], function()
     Route::post('/Active_User', [App\Http\Controllers\UserController::class, 'Active_User']);
     Route::get('approved',[App\Http\Controllers\DriverController::class, 'approves'])->name('approved');
     // GatePass
+    
 
     Route::post('/vehiclelist', [App\Http\Controllers\GatepassController::class, 'vehiclelist']);
     Route::post('/vehiclecheck', [App\Http\Controllers\GatepassController::class, 'vehiclecheck']);
